@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <Button
+        android:id="@+id/btnServices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Servicios (CRUD)" />
+
+    <Button
+        android:id="@+id/btnBlocks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bloquear horarios" />
+
+    <Button
+        android:id="@+id/btnStats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Estadísticas" />
+
+</LinearLayout>
+

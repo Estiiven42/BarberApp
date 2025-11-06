@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/barber_black"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".ui.client.ConfirmBookingActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="Confirma tu Cita"
+        android:textColor="@color/barber_white"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Barbero:"
+        android:textColor="@color/barber_grey"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvConfirmBarber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/barber_white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="Nombre del Barbero" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Servicio:"
+        android:textColor="@color/barber_grey"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvConfirmService"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/barber_white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="Corte de Cabello" />
+
+    <TextView
+        android:id="@+id/tvConfirmPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/barber_gold"
+        android:textSize="18sp"
+        tools:text="$25.00" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fecha y Hora:"
+        android:textColor="@color/barber_grey"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvConfirmDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:textColor="@color/barber_white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="2025-11-10 a las 15:30" />
+
+    <Button
+        android:id="@+id/btnConfirmBooking"
+        style="@style/BarberButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Confirmar y Agendar" />
+
+</LinearLayout>

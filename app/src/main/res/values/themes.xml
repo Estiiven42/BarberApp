@@ -1,0 +1,26 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.BarberApp" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/barber_gold</item>
+        <item name="colorOnPrimary">@color/barber_black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/barber_gold</item>
+        <item name="colorOnSecondary">@color/barber_black</item>
+        <!-- Status bar and background colors -->
+        <item name="android:statusBarColor">@color/barber_black</item>
+        <item name="android:windowBackground">@color/barber_black</item>
+        <!-- Text Colors -->
+        <item name="android:textColor">@color/barber_white</item>
+        <item name="android:textColorHint">@color/barber_grey</item>
+        <!-- Button Style -->
+        <item name="materialButtonStyle">@style/BarberButton</item>
+    </style>
+
+    <style name="BarberButton" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/barber_gold</item>
+        <item name="android:textColor">@color/barber_black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">8dp</item>
+    </style>
+</resources>

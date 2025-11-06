@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:name=".BarberApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="BarberApp"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.BarberApp"
+        tools:targetApi="34">
+
+        <activity android:name=".ui.auth.LoginActivity"/>
+        <activity android:name=".ui.auth.RegisterActivity"/>
+
+        <!-- Client Flow -->
+        <activity android:name=".ui.client.ClientHomeActivity"/>
+        <activity android:name=".ui.client.SelectBarberActivity"/>
+        <activity android:name=".ui.client.SelectServiceActivity"/>
+        <activity android:name=".ui.client.SelectDateTimeActivity"/>
+        <activity android:name=".ui.client.ConfirmBookingActivity"/>
+        <activity android:name=".ui.client.MyBookingsActivity"/>
+
+        <!-- Barber Flow -->
+        <activity android:name=".ui.barber.BarberHomeActivity"/>
+
+        <!-- Admin Flow -->
+        <activity android:name=".ui.admin.AdminDashboardActivity"/>
+        <activity android:name=".ui.admin.ServicesCrudActivity"/>
+        <activity android:name=".ui.admin.BlockTimesActivity"/>
+        <activity android:name=".ui.admin.StatisticsActivity"/>
+
+        <service
+            android:name=".notifications.BarberFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".ui.SplashActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

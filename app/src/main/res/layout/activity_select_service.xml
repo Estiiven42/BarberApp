@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/barber_black"
+    android:padding="16dp"
+    tools:context=".ui.client.SelectServiceActivity">
+
+    <TextView
+        android:id="@+id/tvSelectedBarber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Elige un Servicio"
+        android:textColor="@color/barber_white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Servicios disponibles con [Nombre del barbero]"
+        android:textColor="@color/barber_grey"
+        android:textSize="16sp"
+        android:id="@+id/tvSubtitle"
+        android:layout_marginBottom="24dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvServices"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>
