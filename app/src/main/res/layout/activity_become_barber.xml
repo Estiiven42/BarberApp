@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/barber_black"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp"
+    tools:context=".ui.barber.BecomeBarberActivity">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="24dp"
+        android:src="@android:drawable/ic_menu_myplaces" 
+        android:contentDescription="Icono de barbero"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="Conviértete en Barbero"
+        android:textColor="@color/barber_white"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:text="Al confirmar, tu cuenta se cambiará al rol de barbero. Podrás publicar tus horarios, gestionar tus citas y ver tu historial de servicios."
+        android:textColor="@color/barber_grey"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btnConfirmBecomeBarber"
+        style="@style/BarberButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Confirmar y Convertirme en Barbero" />
+
+</LinearLayout>

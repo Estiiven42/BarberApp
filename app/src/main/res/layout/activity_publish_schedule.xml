@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/barber_black"
+    android:fillViewport="true"
+    tools:context=".ui.barber.PublishScheduleActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="Publicar Nuevo Horario"
+            android:textColor="@color/barber_white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <!-- Days of the week -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Días de la semana"
+            android:textColor="@color/barber_grey" />
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:orientation="horizontal">
+
+            <CheckBox android:id="@+id/cbMonday" android:text="Lunes" />
+            <CheckBox android:id="@+id/cbTuesday" android:text="Martes" />
+            <CheckBox android:id="@+id/cbWednesday" android:text="Miércoles" />
+            <CheckBox android:id="@+id/cbThursday" android:text="Jueves" />
+            <CheckBox android:id="@+id/cbFriday" android:text="Viernes" />
+            <CheckBox android:id="@+id/cbSaturday" android:text="Sábado" />
+            <CheckBox android:id="@+id/cbSunday" android:text="Domingo" />
+        </GridLayout>
+
+        <!-- Time Range -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
+            android:text="Rango de Horas"
+            android:textColor="@color/barber_grey" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etStartTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/edit_text_background"
+                android:focusable="false"
+                android:hint="Hora Inicio"
+                android:padding="16dp" />
+
+            <EditText
+                android:id="@+id/etEndTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/edit_text_background"
+                android:focusable="false"
+                android:hint="Hora Fin"
+                android:padding="16dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSaveSchedule"
+            style="@style/BarberButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Guardar Horario" />
+
+    </LinearLayout>
+</ScrollView>
