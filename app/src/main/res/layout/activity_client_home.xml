@@ -90,6 +90,16 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tvBecomeBarber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btnLogout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:text="¿Eres barbero? Toca aquí para cambiar tu rol"
+        android:textColor="@color/barber_gold" />
+
     <Button
         android:id="@+id/btnLogout"
         style="@style/Widget.Material3.Button.TextButton"

@@ -43,7 +43,10 @@ class MyBookingsActivity : AppCompatActivity() {
                     rvBookings.visibility = View.GONE
                 } else {
                     val bookings = result.toObjects(Booking::class.java)
-                    val adapter = BookingAdapter(bookings)
+                    val adapter = BookingAdapter(bookings, "cliente") { booking ->
+                        // Client-side click action (e.g., view details or cancel)
+                        Toast.makeText(this, "Cita seleccionada: ${booking.id}", Toast.LENGTH_SHORT).show()
+                    }
                     rvBookings.adapter = adapter
                     tvNoBookings.visibility = View.GONE
                     rvBookings.visibility = View.VISIBLE

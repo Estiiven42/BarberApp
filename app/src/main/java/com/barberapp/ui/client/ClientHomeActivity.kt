@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.barberapp.R
 import com.barberapp.ui.auth.LoginActivity
+import com.barberapp.ui.barber.BecomeBarberActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -26,6 +27,7 @@ class ClientHomeActivity : AppCompatActivity() {
         val btnMyBookings = findViewById<Button>(R.id.btnMyBookings)
         val btnMyProfile = findViewById<Button>(R.id.btnMyProfile)
         val btnLogout = findViewById<Button>(R.id.btnLogout)
+        val tvBecomeBarber = findViewById<TextView>(R.id.tvBecomeBarber)
 
         // Fetch and display user's name
         auth.currentUser?.uid?.let {
@@ -47,6 +49,10 @@ class ClientHomeActivity : AppCompatActivity() {
 
         btnMyProfile.setOnClickListener {
             // Funcionalidad futura
+        }
+
+        tvBecomeBarber.setOnClickListener {
+            startActivity(Intent(this, BecomeBarberActivity::class.java))
         }
 
         btnLogout.setOnClickListener {

@@ -30,6 +30,10 @@
 
         <!-- Barber Flow -->
         <activity android:name=".ui.barber.BarberHomeActivity"/>
+        <activity android:name=".ui.barber.BecomeBarberActivity"/>
+        <activity android:name=".ui.barber.MySchedulesActivity"/>
+        <activity android:name=".ui.barber.PublishScheduleActivity"/>
+        <activity android:name=".ui.barber.BarberBookingsActivity"/>
 
         <!-- Admin Flow -->
         <activity android:name=".ui.admin.AdminDashboardActivity"/>

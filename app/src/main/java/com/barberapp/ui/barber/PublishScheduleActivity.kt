@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.barberapp.R
+import com.barberapp.data.model.Schedule
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -21,7 +22,7 @@ class PublishScheduleActivity : AppCompatActivity() {
 
     private lateinit var etStartTime: EditText
     private lateinit var etEndTime: EditText
-    private val selectedDays = mutableMapOf<Int, Boolean>()
+    private val selectedDays = mutableMapOf<Int, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,19 +42,36 @@ class PublishScheduleActivity : AppCompatActivity() {
 
     private fun setupDayCheckBoxes() {
         val days = mapOf(
-            R.id.cbMonday to Calendar.MONDAY,
-            R.id.cbTuesday to Calendar.TUESDAY,
-            R.id.cbWednesday to Calendar.WEDNESDAY,
-            R.id.cbThursday to Calendar.THURSDAY,
-            R.id.cbFriday to Calendar.FRIDAY,
-            R.id.cbSaturday to Calendar.SATURDAY,
-            R.id.cbSunday to Calendar.SUNDAY
+            R.id.cbMonday to "Lunes",
+            R.id.cbTuesday to "Martes",
+            R.id.cbWednesday to "Miércoles",
+            R.id.cbThursday to "Jueves",
+            R.id.cbFriday to "Viernes",
+            R.id.cbSaturday to "Sábado",
+            R.id.cbSunday to "Domingo"
         )
 
-        days.forEach { (id, dayOfWeek) ->
+        days.forEach { (id, dayName) ->
             findViewById<CheckBox>(id).setOnCheckedChangeListener { _, isChecked ->
-                selectedDays[dayOfWeek] = isChecked
+                if (isChecked) {
+                    selectedDays[getDayOfWeekInt(dayName)] = dayName
+                } else {
+                    selectedDays.remove(getDayOfWeekInt(dayName))
+                }
             }
+        }
+    }
+
+    private fun getDayOfWeekInt(dayName: String): Int {
+        return when (dayName) {
+            "Lunes" -> Calendar.MONDAY
+            "Martes" -> Calendar.TUESDAY
+            "Miércoles" -> Calendar.WEDNESDAY
+            "Jueves" -> Calendar.THURSDAY
+            "Viernes" -> Calendar.FRIDAY
+            "Sábado" -> Calendar.SATURDAY
+            "Domingo" -> Calendar.SUNDAY
+            else -> -1
         }
     }
 
@@ -83,7 +101,7 @@ class PublishScheduleActivity : AppCompatActivity() {
             Toast.makeText(this, "Error de autenticación", Toast.LENGTH_SHORT).show()
             return
         }
-        if (selectedDays.none { it.value }) {
+        if (selectedDays.isEmpty()) {
             Toast.makeText(this, "Selecciona al menos un día", Toast.LENGTH_SHORT).show()
             return
         }
@@ -94,13 +112,23 @@ class PublishScheduleActivity : AppCompatActivity() {
 
         val batch = db.batch()
 
-        // Generate slots for the next 4 weeks
+        // 1. Save the Schedule Rule
+        val scheduleRule = Schedule(
+            barberId = barberId,
+            daysOfWeek = selectedDays.values.toList(),
+            startTime = startTime,
+            endTime = endTime
+        )
+        val scheduleDocRef = db.collection("schedules").document()
+        batch.set(scheduleDocRef, scheduleRule)
+
+        // 2. Generate availability slots
         val calendar = Calendar.getInstance()
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
         for (i in 0 until 28) { // 4 weeks
             val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-            if (selectedDays[currentDayOfWeek] == true) {
+            if (selectedDays.containsKey(currentDayOfWeek)) {
                 val dateStr = sdf.format(calendar.time)
                 generateSlotsForDay(barberId, dateStr, startTime, endTime).forEach { slot ->
                     val docRef = db.collection("availability").document()

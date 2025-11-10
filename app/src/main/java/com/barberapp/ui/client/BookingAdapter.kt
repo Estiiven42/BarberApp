@@ -11,24 +11,29 @@ import com.barberapp.R
 import com.barberapp.data.model.Booking
 import com.google.firebase.firestore.FirebaseFirestore
 
-class BookingAdapter(private val bookings: List<Booking>) : RecyclerView.Adapter<BookingAdapter.BookingViewHolder>() {
+class BookingAdapter(
+    private val bookings: List<Booking>,
+    private val userRole: String,
+    private val onItemClick: (Booking) -> Unit
+) : RecyclerView.Adapter<BookingAdapter.BookingViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookingViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_booking, parent, false)
-        return BookingViewHolder(view)
+        return BookingViewHolder(view, userRole)
     }
 
     override fun onBindViewHolder(holder: BookingViewHolder, position: Int) {
         val booking = bookings[position]
         holder.bind(booking)
+        holder.itemView.setOnClickListener { onItemClick(booking) }
     }
 
     override fun getItemCount(): Int = bookings.size
 
-    class BookingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val serviceTextView: TextView = itemView.findViewById(R.id.tvBookingService)
+    class BookingViewHolder(itemView: View, private val userRole: String) : RecyclerView.ViewHolder(itemView) {
+        private val primaryTextView: TextView = itemView.findViewById(R.id.tvBookingService) // Will show service or client name
         private val dateTimeTextView: TextView = itemView.findViewById(R.id.tvBookingDateTime)
-        private val barberTextView: TextView = itemView.findViewById(R.id.tvBookingBarber)
+        private val secondaryTextView: TextView = itemView.findViewById(R.id.tvBookingBarber) // Will show barber or be hidden
         private val statusTextView: TextView = itemView.findViewById(R.id.tvBookingStatus)
         private val db = FirebaseFirestore.getInstance()
 
@@ -44,32 +49,31 @@ class BookingAdapter(private val bookings: List<Booking>) : RecyclerView.Adapter
                 else -> statusTextView.background.setTint(ContextCompat.getColor(itemView.context, R.color.barber_grey))
             }
 
-            // Fetch and set Service Name using serviceId
-            if (booking.serviceId.isNotEmpty()) {
-                db.collection("services").document(booking.serviceId).get()
-                    .addOnSuccessListener { document ->
-                        val serviceName = document.getString("name")
-                        serviceTextView.text = serviceName ?: "Servicio Desconocido"
-                    }
-                    .addOnFailureListener {
-                        serviceTextView.text = "Error al cargar"
-                    }
+            if (userRole == "barbero") {
+                // Barber's view: Show client name, hide secondary text
+                secondaryTextView.visibility = View.GONE
+                fetchAndSetUserName(booking.clientId, primaryTextView, "Cliente: ")
             } else {
-                serviceTextView.text = "Servicio no especificado"
+                // Client's view: Show service and barber name
+                secondaryTextView.visibility = View.VISIBLE
+                fetchAndSetServiceName(booking.serviceId, primaryTextView)
+                fetchAndSetUserName(booking.barberId, secondaryTextView, "Barbero: ")
             }
+        }
 
-            // Fetch and set Barber Name using barberId
-            if (booking.barberId.isNotEmpty()) {
-                db.collection("users").document(booking.barberId).get()
-                    .addOnSuccessListener { document ->
-                        val barberName = document.getString("name")
-                        barberTextView.text = "Barbero: ${barberName ?: "Desconocido"}"
-                    }
-                    .addOnFailureListener {
-                        barberTextView.text = "Barbero: Error"
-                    }
-            } else {
-                barberTextView.text = "Barbero: No especificado"
+        private fun fetchAndSetServiceName(serviceId: String, textView: TextView) {
+            if (serviceId.isNotEmpty()) {
+                db.collection("services").document(serviceId).get().addOnSuccessListener {
+                    textView.text = it.getString("name") ?: "Servicio Desconocido"
+                }
+            }
+        }
+
+        private fun fetchAndSetUserName(userId: String, textView: TextView, prefix: String) {
+            if (userId.isNotEmpty()) {
+                db.collection("users").document(userId).get().addOnSuccessListener {
+                    textView.text = prefix + (it.getString("name") ?: "Desconocido")
+                }
             }
         }
     }

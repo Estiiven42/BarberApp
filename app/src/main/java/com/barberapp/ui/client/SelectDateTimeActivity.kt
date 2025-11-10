@@ -9,12 +9,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.barberapp.R
 import com.barberapp.data.model.TimeSlot
+import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
 class SelectDateTimeActivity : AppCompatActivity() {
 
+    private val db: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private var barberId: String? = null
     private var barberName: String? = null
     private var serviceId: String? = null
@@ -41,7 +43,7 @@ class SelectDateTimeActivity : AppCompatActivity() {
 
         val calendarView = findViewById<CalendarView>(R.id.calendarView)
         val rvTimeSlots = findViewById<RecyclerView>(R.id.rvTimeSlots)
-        rvTimeSlots.layoutManager = GridLayoutManager(this, 3) // 3 columns for time slots
+        rvTimeSlots.layoutManager = GridLayoutManager(this, 3)
 
         // Set initial date
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -58,31 +60,38 @@ class SelectDateTimeActivity : AppCompatActivity() {
     }
 
     private fun updateAvailableTimeSlots(recyclerView: RecyclerView, date: String) {
-        // --- SIMULATION --- //
-        // In a real scenario, you would query Firestore for the barber's availability on the selected date.
-        val simulatedSlots = listOf(
-            TimeSlot("09:00 AM", true),
-            TimeSlot("10:00 AM", false), // Example of a booked slot
-            TimeSlot("11:00 AM", true),
-            TimeSlot("12:00 PM", true),
-            TimeSlot("02:00 PM", true),
-            TimeSlot("03:00 PM", false),
-            TimeSlot("04:00 PM", true),
-            TimeSlot("05:00 PM", true)
-        )
+        db.collection("availability")
+            .whereEqualTo("barberId", barberId)
+            .whereEqualTo("date", date)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.isEmpty) {
+                    Toast.makeText(this, "No hay horarios disponibles para este día", Toast.LENGTH_SHORT).show()
+                    recyclerView.adapter = TimeSlotAdapter(emptyList()) {}
+                    return@addOnSuccessListener
+                }
 
-        val adapter = TimeSlotAdapter(simulatedSlots) { timeSlot ->
-            val intent = Intent(this, ConfirmBookingActivity::class.java).apply {
-                putExtra("BARBER_ID", barberId)
-                putExtra("BARBER_NAME", barberName)
-                putExtra("SERVICE_ID", serviceId)
-                putExtra("SERVICE_NAME", serviceName)
-                putExtra("SERVICE_PRICE", servicePrice)
-                putExtra("DATE", selectedDate)
-                putExtra("TIME", timeSlot.time)
+                val slots = documents.toObjects(TimeSlot::class.java)
+                val adapter = TimeSlotAdapter(slots) { timeSlot ->
+                    if (!timeSlot.isAvailable) {
+                        Toast.makeText(this, "Este horario ya no está disponible", Toast.LENGTH_SHORT).show()
+                        return@TimeSlotAdapter
+                    }
+                    val intent = Intent(this, ConfirmBookingActivity::class.java).apply {
+                        putExtra("BARBER_ID", barberId)
+                        putExtra("BARBER_NAME", barberName)
+                        putExtra("SERVICE_ID", serviceId)
+                        putExtra("SERVICE_NAME", serviceName)
+                        putExtra("SERVICE_PRICE", servicePrice)
+                        putExtra("DATE", selectedDate)
+                        putExtra("TIME", timeSlot.time)
+                    }
+                    startActivity(intent)
+                }
+                recyclerView.adapter = adapter
             }
-            startActivity(intent)
-        }
-        recyclerView.adapter = adapter
+            .addOnFailureListener { exception ->
+                Toast.makeText(this, "Error al cargar horarios: ${exception.message}", Toast.LENGTH_LONG).show()
+            }
     }
 }

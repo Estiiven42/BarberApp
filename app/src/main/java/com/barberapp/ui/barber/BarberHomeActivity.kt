@@ -1,61 +1,54 @@
 package com.barberapp.ui.barber
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.barberapp.R
+import com.barberapp.ui.auth.LoginActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class BarberHomeActivity : AppCompatActivity() {
+
+    private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private val db: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
-    private val bookings = mutableListOf<Pair<String, String>>() // (id, summary)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_barber_home)
 
-        val list = findViewById<ListView>(R.id.listBookings)
-        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice)
-        list.choiceMode = ListView.CHOICE_MODE_SINGLE
-        list.adapter = adapter
+        // Setup Views
+        val tvWelcome = findViewById<TextView>(R.id.tvBarberWelcome)
+        val btnMySchedules = findViewById<Button>(R.id.btnMySchedules)
+        val btnMyBookings = findViewById<Button>(R.id.btnMyBarberBookings)
+        val btnLogout = findViewById<Button>(R.id.btnLogoutBarber)
 
-        loadBookings(adapter)
-
-        findViewById<Button>(R.id.btnAccept).setOnClickListener {
-            val pos = list.checkedItemPosition
-            if (pos != ListView.INVALID_POSITION) updateStatus(bookings[pos].first, "accepted")
+        // Fetch and display barber's name
+        auth.currentUser?.uid?.let {
+            db.collection("users").document(it).get()
+                .addOnSuccessListener { document ->
+                    val name = document.getString("name")
+                    tvWelcome.text = "Hola, Barbero $name"
+                }
         }
-        findViewById<Button>(R.id.btnCancel).setOnClickListener {
-            val pos = list.checkedItemPosition
-            if (pos != ListView.INVALID_POSITION) updateStatus(bookings[pos].first, "cancelled")
-        }
-    }
 
-    private fun loadBookings(adapter: ArrayAdapter<String>) {
-        db.collection("bookings").get().addOnSuccessListener { q ->
-            bookings.clear()
-            adapter.clear()
-            q.forEach { d ->
-                val id = d.id
-                val client = d.getString("clientId")
-                val date = d.getString("date")
-                val time = d.getString("time")
-                val status = d.getString("status")
-                val line = "Cliente: $client  $date $time  ($status)"
-                bookings.add(id to line)
-                adapter.add(line)
-            }
+        // Click Listeners
+        btnMySchedules.setOnClickListener {
+            startActivity(Intent(this, MySchedulesActivity::class.java))
         }
-    }
 
-    private fun updateStatus(bookingId: String, status: String) {
-        db.collection("bookings").document(bookingId)
-            .update("status", status)
-            .addOnSuccessListener { Toast.makeText(this, "Actualizado", Toast.LENGTH_SHORT).show() }
-            .addOnFailureListener { Toast.makeText(this, it.localizedMessage ?: "Error", Toast.LENGTH_SHORT).show() }
+        btnMyBookings.setOnClickListener {
+            startActivity(Intent(this, BarberBookingsActivity::class.java))
+        }
+
+        btnLogout.setOnClickListener {
+            auth.signOut()
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
     }
 }
-
