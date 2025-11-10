@@ -16,18 +16,19 @@ class ScheduleAdapter(private val schedules: List<Schedule>) : RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: ScheduleViewHolder, position: Int) {
-        holder.bind(schedules[position])
+        val schedule = schedules[position]
+        holder.bind(schedule)
     }
 
-    override fun getItemCount(): Int = schedules.size
+    override fun getItemCount() = schedules.size
 
     class ScheduleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val daysTextView: TextView = itemView.findViewById(R.id.tvScheduleDays)
-        private val timeRangeTextView: TextView = itemView.findViewById(R.id.tvScheduleTimeRange)
+        private val tvDate: TextView = itemView.findViewById(R.id.tvScheduleDate)
+        private val tvTimeSlots: TextView = itemView.findViewById(R.id.tvScheduleTimeSlots)
 
         fun bind(schedule: Schedule) {
-            daysTextView.text = schedule.daysOfWeek.joinToString(", ")
-            timeRangeTextView.text = "De ${schedule.startTime} a ${schedule.endTime}"
+            tvDate.text = schedule.date
+            tvTimeSlots.text = schedule.timeSlots.joinToString(", ")
         }
     }
 }

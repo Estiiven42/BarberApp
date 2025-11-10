@@ -1,36 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/barber_black"
-    android:padding="16dp"
     tools:context=".ui.barber.BarberBookingsActivity">
 
     <TextView
         android:id="@+id/tvBarberBookingsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_margin="16dp"
         android:text="Mis Citas Agendadas"
         android:textColor="@color/barber_white"
         android:textSize="24sp"
         android:textStyle="bold" />
 
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/barber_black">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Próximas" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pasadas" />
+
+    </com.google.android.material.tabs.TabLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvBarberBookings"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/tvBarberBookingsTitle" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp" />
 
     <TextView
         android:id="@+id/tvNoBarberBookings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Aún no tienes citas agendadas."
+        android:layout_gravity="center"
+        android:text="No hay citas en esta categoría."
         android:textColor="@color/barber_grey"
         android:textSize="18sp"
         android:visibility="gone" />
 
-</RelativeLayout>
+</LinearLayout>

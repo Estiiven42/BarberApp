@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:name=".BarberApp"
@@ -30,6 +31,12 @@
 
         <!-- Barber Flow -->
         <activity android:name=".ui.barber.BarberHomeActivity"/>
+        <activity android:name=".ui.barber.BecomeBarberActivity"/>
+        <activity android:name=".ui.barber.MySchedulesActivity"/>
+        <activity android:name=".ui.barber.PublishScheduleActivity"/>
+        <activity android:name=".ui.barber.BarberBookingsActivity"/>
+        <activity android:name=".ui.barber.ManageServicesActivity"/>
+        <activity android:name=".ui.barber.AddServiceActivity"/>
 
         <!-- Admin Flow -->
         <activity android:name=".ui.admin.AdminDashboardActivity"/>

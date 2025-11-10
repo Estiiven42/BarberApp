@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.barberapp.R
 import com.barberapp.ui.auth.LoginActivity
+import com.barberapp.ui.barber.BarberHomeActivity
+import com.barberapp.ui.barber.BecomeBarberActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -26,13 +28,28 @@ class ClientHomeActivity : AppCompatActivity() {
         val btnMyBookings = findViewById<Button>(R.id.btnMyBookings)
         val btnMyProfile = findViewById<Button>(R.id.btnMyProfile)
         val btnLogout = findViewById<Button>(R.id.btnLogout)
+        val tvBecomeBarber = findViewById<TextView>(R.id.tvBecomeBarber)
 
-        // Fetch and display user's name
-        auth.currentUser?.uid?.let {
-            db.collection("users").document(it).get()
+        // Fetch and display user's info
+        auth.currentUser?.uid?.let { uid ->
+            db.collection("users").document(uid).get()
                 .addOnSuccessListener { document ->
                     val name = document.getString("name")
+                    val role = document.getString("role")
+
                     tvWelcome.text = "Hola, $name"
+
+                    if (role == "barber") {
+                        tvBecomeBarber.text = "Entrar a mi salón"
+                        tvBecomeBarber.setOnClickListener {
+                            startActivity(Intent(this, BarberHomeActivity::class.java))
+                        }
+                    } else {
+                        tvBecomeBarber.text = "Conviértete en barbero"
+                        tvBecomeBarber.setOnClickListener {
+                            startActivity(Intent(this, BecomeBarberActivity::class.java))
+                        }
+                    }
                 }
         }
 

@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="@color/barber_black"
+    tools:context=".ui.SplashActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="BarberApp"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_gravity="center" />
+    <ImageView
+        android:id="@+id/ivSplashLogo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerInParent="true"
+        android:src="@android:drawable/ic_menu_camera" 
+        android:contentDescription="Logo de la barbería"/>
 
     <ProgressBar
+        android:id="@+id/splashProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="48dp"/>
+        android:layout_below="@id/ivSplashLogo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:indeterminateTint="@color/barber_gold" />
 
-</FrameLayout>
-
+</RelativeLayout>

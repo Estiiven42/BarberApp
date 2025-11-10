@@ -21,7 +21,7 @@ class PublishScheduleActivity : AppCompatActivity() {
 
     private lateinit var etStartTime: EditText
     private lateinit var etEndTime: EditText
-    private val selectedDays = mutableMapOf<Int, Boolean>()
+    private val selectedDays = mutableMapOf<Int, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,19 +41,36 @@ class PublishScheduleActivity : AppCompatActivity() {
 
     private fun setupDayCheckBoxes() {
         val days = mapOf(
-            R.id.cbMonday to Calendar.MONDAY,
-            R.id.cbTuesday to Calendar.TUESDAY,
-            R.id.cbWednesday to Calendar.WEDNESDAY,
-            R.id.cbThursday to Calendar.THURSDAY,
-            R.id.cbFriday to Calendar.FRIDAY,
-            R.id.cbSaturday to Calendar.SATURDAY,
-            R.id.cbSunday to Calendar.SUNDAY
+            R.id.cbMonday to "Lunes",
+            R.id.cbTuesday to "Martes",
+            R.id.cbWednesday to "Miércoles",
+            R.id.cbThursday to "Jueves",
+            R.id.cbFriday to "Viernes",
+            R.id.cbSaturday to "Sábado",
+            R.id.cbSunday to "Domingo"
         )
 
-        days.forEach { (id, dayOfWeek) ->
+        days.forEach { (id, dayName) ->
             findViewById<CheckBox>(id).setOnCheckedChangeListener { _, isChecked ->
-                selectedDays[dayOfWeek] = isChecked
+                if (isChecked) {
+                    selectedDays[getDayOfWeekInt(dayName)] = dayName
+                } else {
+                    selectedDays.remove(getDayOfWeekInt(dayName))
+                }
             }
+        }
+    }
+
+    private fun getDayOfWeekInt(dayName: String): Int {
+        return when (dayName) {
+            "Lunes" -> Calendar.MONDAY
+            "Martes" -> Calendar.TUESDAY
+            "Miércoles" -> Calendar.WEDNESDAY
+            "Jueves" -> Calendar.THURSDAY
+            "Viernes" -> Calendar.FRIDAY
+            "Sábado" -> Calendar.SATURDAY
+            "Domingo" -> Calendar.SUNDAY
+            else -> -1
         }
     }
 
@@ -83,7 +100,7 @@ class PublishScheduleActivity : AppCompatActivity() {
             Toast.makeText(this, "Error de autenticación", Toast.LENGTH_SHORT).show()
             return
         }
-        if (selectedDays.none { it.value }) {
+        if (selectedDays.isEmpty()) {
             Toast.makeText(this, "Selecciona al menos un día", Toast.LENGTH_SHORT).show()
             return
         }
@@ -93,19 +110,22 @@ class PublishScheduleActivity : AppCompatActivity() {
         }
 
         val batch = db.batch()
-
-        // Generate slots for the next 4 weeks
         val calendar = Calendar.getInstance()
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-        for (i in 0 until 28) { // 4 weeks
+        val timeSlots = generateTimeSlots(startTime, endTime)
+        if (timeSlots.isEmpty()) {
+            Toast.makeText(this, "La hora de fin debe ser posterior a la hora de inicio.", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        for (i in 0 until 28) { // Publish for the next 4 weeks
             val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-            if (selectedDays[currentDayOfWeek] == true) {
+            if (selectedDays.containsKey(currentDayOfWeek)) {
                 val dateStr = sdf.format(calendar.time)
-                generateSlotsForDay(barberId, dateStr, startTime, endTime).forEach { slot ->
-                    val docRef = db.collection("availability").document()
-                    batch.set(docRef, slot)
-                }
+                val availabilityDocRef = db.collection("barbers").document(barberId).collection("availability").document(dateStr)
+                val availabilityData = hashMapOf("availableTimes" to timeSlots)
+                batch.set(availabilityDocRef, availabilityData)
             }
             calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
@@ -116,17 +136,20 @@ class PublishScheduleActivity : AppCompatActivity() {
                 finish()
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Error al guardar: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Error al guardar el horario: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
 
-    private fun generateSlotsForDay(barberId: String, date: String, startTime: String, endTime: String): List<Map<String, Any>> {
-        val slots = mutableListOf<Map<String, Any>>()
+    private fun generateTimeSlots(startTime: String, endTime: String): List<String> {
+        val slots = mutableListOf<String>()
+        val timeFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+
         val start = Calendar.getInstance().apply {
             val timeParts = startTime.split(":")
             set(Calendar.HOUR_OF_DAY, timeParts[0].toInt())
             set(Calendar.MINUTE, timeParts[1].toInt())
         }
+
         val end = Calendar.getInstance().apply {
             val timeParts = endTime.split(":")
             set(Calendar.HOUR_OF_DAY, timeParts[0].toInt())
@@ -134,16 +157,7 @@ class PublishScheduleActivity : AppCompatActivity() {
         }
 
         while (start.before(end)) {
-            val timeFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-            val slotTime = timeFormatter.format(start.time)
-
-            val slotData = hashMapOf(
-                "barberId" to barberId,
-                "date" to date,
-                "time" to slotTime,
-                "isAvailable" to true
-            )
-            slots.add(slotData)
+            slots.add(timeFormatter.format(start.time))
             start.add(Calendar.MINUTE, 30) // 30-minute slots
         }
         return slots

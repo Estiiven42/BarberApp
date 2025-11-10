@@ -3,6 +3,7 @@ package com.barberapp.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.barberapp.R
 import com.barberapp.ui.admin.AdminDashboardActivity
 import com.barberapp.ui.auth.LoginActivity
 import com.barberapp.ui.barber.BarberHomeActivity
@@ -19,29 +20,54 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_splash)
 
+        android.os.Handler(mainLooper).postDelayed({
+            checkUserStatus()
+        }, 1500) // 1.5 seconds delay
+    }
+
+    private fun checkUserStatus() {
         val user = auth.currentUser
         if (user == null) {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+            goToLogin()
             return
         }
 
-        // Buscar rol del usuario en Firestore: users/{uid}.role ∈ {admin, barber, client}
         db.collection("users").document(user.uid).get()
-            .addOnSuccessListener { snap ->
-                val role = snap.getString("role") ?: "client"
-                when (role) {
-                    "admin" -> startActivity(Intent(this, AdminDashboardActivity::class.java))
-                    "barber" -> startActivity(Intent(this, BarberHomeActivity::class.java))
-                    else -> startActivity(Intent(this, ClientHomeActivity::class.java))
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val role = document.getString("role")
+                    val isBarber = document.getBoolean("isBarber") ?: false
+
+                    when {
+                        role == "admin" -> goTo(AdminDashboardActivity::class.java)
+                        role == "barber" || isBarber -> goTo(BarberHomeActivity::class.java)
+                        else -> goTo(ClientHomeActivity::class.java)
+                    }
+                } else {
+                    // If user document doesn't exist, they are likely a new user.
+                    // Default to client view, or guide them to a setup screen.
+                    goTo(ClientHomeActivity::class.java)
                 }
-                finish()
             }
             .addOnFailureListener {
-                startActivity(Intent(this, LoginActivity::class.java))
-                finish()
+                // If we can't get the user role, it's safer to log them out.
+                goToLogin()
             }
     }
-}
 
+    private fun <T : AppCompatActivity> goTo(activityClass: Class<T>) {
+        val intent = Intent(this, activityClass)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
+
+    private fun goToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
+}

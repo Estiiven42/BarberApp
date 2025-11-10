@@ -7,7 +7,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.barberapp.R
-import com.barberapp.ui.client.ClientHomeActivity
+import com.barberapp.ui.SplashActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
@@ -57,13 +57,14 @@ class RegisterActivity : AppCompatActivity() {
                         "city" to cityValue,
                         "neighborhood" to neighborhoodValue,
                         "email" to emailValue,
-                        "role" to "client"
+                        "role" to "client" // Always register as a client
                     )
                     db.collection("users").document(uid).set(userData)
                         .addOnSuccessListener {
                             Toast.makeText(this, "¡Bienvenido(a)!", Toast.LENGTH_LONG).show()
-                            startActivity(Intent(this, ClientHomeActivity::class.java))
-                            finishAffinity()
+                            val intent = Intent(this, SplashActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
                         }
                         .addOnFailureListener { e ->
                             Toast.makeText(this, e.localizedMessage ?: "Error al guardar datos", Toast.LENGTH_SHORT).show()
@@ -75,23 +76,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         btnLogin.setOnClickListener {
-            val emailValue = email.text.toString().trim()
-            val passwordValue = pass.text.toString().trim()
-
-            if (emailValue.isEmpty() || passwordValue.isEmpty()) {
-                Toast.makeText(this, "Ingresa correo y contraseña para iniciar sesión", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            auth.signInWithEmailAndPassword(emailValue, passwordValue)
-                .addOnSuccessListener {
-                    Toast.makeText(this, "¡Bienvenido(a) de nuevo!", Toast.LENGTH_LONG).show()
-                    startActivity(Intent(this, ClientHomeActivity::class.java))
-                    finishAffinity()
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(this, "Usuario no registrado o contraseña incorrecta", Toast.LENGTH_LONG).show()
-                }
+            startActivity(Intent(this, LoginActivity::class.java))
         }
     }
 }

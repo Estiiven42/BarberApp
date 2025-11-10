@@ -2,25 +2,34 @@ package com.barberapp.ui.client
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.CalendarView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.barberapp.R
 import com.barberapp.data.model.TimeSlot
+import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
 class SelectDateTimeActivity : AppCompatActivity() {
 
+    private val db: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private var barberId: String? = null
     private var barberName: String? = null
     private var serviceId: String? = null
     private var serviceName: String? = null
     private var servicePrice: Double = 0.0
     private lateinit var selectedDate: String
+
+    private lateinit var rvTimeSlots: RecyclerView
+    private lateinit var tvNoTimeSlots: TextView
+    private lateinit var timeSlotAdapter: TimeSlotAdapter
+    private val timeSlotsList = mutableListOf<TimeSlot>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,38 +49,26 @@ class SelectDateTimeActivity : AppCompatActivity() {
         }
 
         val calendarView = findViewById<CalendarView>(R.id.calendarView)
-        val rvTimeSlots = findViewById<RecyclerView>(R.id.rvTimeSlots)
-        rvTimeSlots.layoutManager = GridLayoutManager(this, 3) // 3 columns for time slots
+        rvTimeSlots = findViewById(R.id.rvTimeSlots)
+        tvNoTimeSlots = findViewById(R.id.tvNoTimeSlots)
 
-        // Set initial date
+        setupRecyclerView()
+
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         selectedDate = sdf.format(Calendar.getInstance().time)
-        updateAvailableTimeSlots(rvTimeSlots, selectedDate)
+        updateAvailableTimeSlots(selectedDate)
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val calendar = Calendar.getInstance().apply {
                 set(year, month, dayOfMonth)
             }
             selectedDate = sdf.format(calendar.time)
-            updateAvailableTimeSlots(rvTimeSlots, selectedDate)
+            updateAvailableTimeSlots(selectedDate)
         }
     }
 
-    private fun updateAvailableTimeSlots(recyclerView: RecyclerView, date: String) {
-        // --- SIMULATION --- //
-        // In a real scenario, you would query Firestore for the barber's availability on the selected date.
-        val simulatedSlots = listOf(
-            TimeSlot("09:00 AM", true),
-            TimeSlot("10:00 AM", false), // Example of a booked slot
-            TimeSlot("11:00 AM", true),
-            TimeSlot("12:00 PM", true),
-            TimeSlot("02:00 PM", true),
-            TimeSlot("03:00 PM", false),
-            TimeSlot("04:00 PM", true),
-            TimeSlot("05:00 PM", true)
-        )
-
-        val adapter = TimeSlotAdapter(simulatedSlots) { timeSlot ->
+    private fun setupRecyclerView() {
+        timeSlotAdapter = TimeSlotAdapter(timeSlotsList) { timeSlot ->
             val intent = Intent(this, ConfirmBookingActivity::class.java).apply {
                 putExtra("BARBER_ID", barberId)
                 putExtra("BARBER_NAME", barberName)
@@ -83,6 +80,43 @@ class SelectDateTimeActivity : AppCompatActivity() {
             }
             startActivity(intent)
         }
-        recyclerView.adapter = adapter
+        rvTimeSlots.layoutManager = GridLayoutManager(this, 3)
+        rvTimeSlots.adapter = timeSlotAdapter
+    }
+
+    private fun updateAvailableTimeSlots(date: String) {
+        if (barberId == null) return
+
+        db.collection("barbers").document(barberId!!).collection("availability").document(date)
+            .get()
+            .addOnSuccessListener { document ->
+                timeSlotsList.clear()
+                if (document != null && document.exists()) {
+                    val slots = document.get("availableTimes") as? List<String> ?: emptyList()
+                    if (slots.isNotEmpty()) {
+                        slots.forEach { time ->
+                            timeSlotsList.add(TimeSlot(time = time, isAvailable = true))
+                        }
+                        tvNoTimeSlots.visibility = View.GONE
+                        rvTimeSlots.visibility = View.VISIBLE
+                    } else {
+                        showNoSlots()
+                    }
+                } else {
+                    showNoSlots()
+                }
+                timeSlotAdapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(this, "Error al cargar horarios: ${exception.message}", Toast.LENGTH_LONG).show()
+                showNoSlots()
+            }
+    }
+
+    private fun showNoSlots() {
+        timeSlotsList.clear()
+        timeSlotAdapter.notifyDataSetChanged()
+        tvNoTimeSlots.visibility = View.VISIBLE
+        rvTimeSlots.visibility = View.GONE
     }
 }

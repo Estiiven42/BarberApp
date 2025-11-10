@@ -3,26 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:layout_marginBottom="12dp"
-    android:background="@drawable/edit_text_background">
+    android:padding="16dp">
 
     <TextView
-        android:id="@+id/tvScheduleDays"
+        android:id="@+id/tvScheduleDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Lunes, Miércoles, Viernes"
-        android:textColor="@color/barber_white"
-        android:textSize="18sp"
+        android:text="Date"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tvScheduleTimeRange"
+        android:id="@+id/tvScheduleTimeSlots"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="De 09:00 a 17:00"
-        android:textColor="@color/barber_gold"
-        android:textSize="16sp" />
+        android:text="Time Slots" />
 
 </LinearLayout>

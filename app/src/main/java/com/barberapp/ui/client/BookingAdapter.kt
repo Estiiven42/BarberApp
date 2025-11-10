@@ -1,17 +1,20 @@
 package com.barberapp.ui.client
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.barberapp.R
 import com.barberapp.data.model.Booking
-import com.google.firebase.firestore.FirebaseFirestore
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-class BookingAdapter(private val bookings: List<Booking>) : RecyclerView.Adapter<BookingAdapter.BookingViewHolder>() {
+class BookingAdapter(
+    private val bookings: List<Booking>,
+    private val onItemClicked: (Booking) -> Unit
+) : RecyclerView.Adapter<BookingAdapter.BookingViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookingViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_booking, parent, false)
@@ -21,55 +24,40 @@ class BookingAdapter(private val bookings: List<Booking>) : RecyclerView.Adapter
     override fun onBindViewHolder(holder: BookingViewHolder, position: Int) {
         val booking = bookings[position]
         holder.bind(booking)
+        holder.itemView.setOnClickListener { onItemClicked(booking) }
     }
 
     override fun getItemCount(): Int = bookings.size
 
     class BookingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val serviceTextView: TextView = itemView.findViewById(R.id.tvBookingService)
-        private val dateTimeTextView: TextView = itemView.findViewById(R.id.tvBookingDateTime)
-        private val barberTextView: TextView = itemView.findViewById(R.id.tvBookingBarber)
-        private val statusTextView: TextView = itemView.findViewById(R.id.tvBookingStatus)
-        private val db = FirebaseFirestore.getInstance()
+        private val tvServiceName: TextView = itemView.findViewById(R.id.tvServiceName)
+        private val tvServicePrice: TextView = itemView.findViewById(R.id.tvServicePrice)
+        private val tvBarberName: TextView = itemView.findViewById(R.id.tvBarberName)
+        private val tvDateTime: TextView = itemView.findViewById(R.id.tvDateTime)
+        private val tvBookingStatus: TextView = itemView.findViewById(R.id.tvBookingStatus)
 
         fun bind(booking: Booking) {
-            dateTimeTextView.text = "${booking.date} a las ${booking.time}"
-            statusTextView.text = booking.status.replaceFirstChar { it.uppercase() }
+            tvServiceName.text = booking.serviceName
+            tvBarberName.text = booking.barberName
+            tvBookingStatus.text = booking.status.replaceFirstChar { it.titlecase(Locale.getDefault()) }
 
-            // Set status color
-            when (booking.status.lowercase()) {
-                "pendiente" -> statusTextView.background.setTint(ContextCompat.getColor(itemView.context, R.color.barber_gold))
-                "confirmada" -> statusTextView.background.setTint(Color.GREEN)
-                "cancelada" -> statusTextView.background.setTint(Color.RED)
-                else -> statusTextView.background.setTint(ContextCompat.getColor(itemView.context, R.color.barber_grey))
-            }
+            val colombianLocale = Locale("es", "CO")
+            val currencyFormat = NumberFormat.getCurrencyInstance(colombianLocale)
+            currencyFormat.maximumFractionDigits = 0
+            tvServicePrice.text = currencyFormat.format(booking.servicePrice)
 
-            // Fetch and set Service Name using serviceId
-            if (booking.serviceId.isNotEmpty()) {
-                db.collection("services").document(booking.serviceId).get()
-                    .addOnSuccessListener { document ->
-                        val serviceName = document.getString("name")
-                        serviceTextView.text = serviceName ?: "Servicio Desconocido"
-                    }
-                    .addOnFailureListener {
-                        serviceTextView.text = "Error al cargar"
-                    }
-            } else {
-                serviceTextView.text = "Servicio no especificado"
-            }
+            val formattedDate = formatDateForDisplay(booking.date)
+            tvDateTime.text = "$formattedDate a las ${booking.time}"
+        }
 
-            // Fetch and set Barber Name using barberId
-            if (booking.barberId.isNotEmpty()) {
-                db.collection("users").document(booking.barberId).get()
-                    .addOnSuccessListener { document ->
-                        val barberName = document.getString("name")
-                        barberTextView.text = "Barbero: ${barberName ?: "Desconocido"}"
-                    }
-                    .addOnFailureListener {
-                        barberTextView.text = "Barbero: Error"
-                    }
-            } else {
-                barberTextView.text = "Barbero: No especificado"
+        private fun formatDateForDisplay(dateStr: String?): String {
+            if (dateStr == null) return ""
+            return try {
+                val parser = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val formatter = SimpleDateFormat("d 'de' MMMM 'de' yyyy", Locale("es", "ES"))
+                formatter.format(parser.parse(dateStr)!!)
+            } catch (e: Exception) {
+                dateStr // Return original date if parsing fails
             }
         }
     }

@@ -42,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             auth.signInWithEmailAndPassword(e, p)
-                .addOnSuccessListener { startActivity(Intent(this, SplashActivity::class.java)); finish() }
+                .addOnSuccessListener { goToSplash() }
                 .addOnFailureListener { Toast.makeText(this, it.localizedMessage ?: "Error", Toast.LENGTH_SHORT).show() }
         }
 
@@ -69,12 +69,18 @@ class LoginActivity : AppCompatActivity() {
                 val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                 auth.signInWithCredential(credential)
-                    .addOnSuccessListener { startActivity(Intent(this, SplashActivity::class.java)); finish() }
+                    .addOnSuccessListener { goToSplash() }
                     .addOnFailureListener { Toast.makeText(this, it.localizedMessage ?: "Error Google", Toast.LENGTH_SHORT).show() }
             } catch (e: Exception) {
                 Toast.makeText(this, e.localizedMessage ?: "Error Google", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun goToSplash() {
+        val intent = Intent(this, SplashActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
     }
 
     companion object {
