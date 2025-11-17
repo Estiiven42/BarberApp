@@ -1,45 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/barber_black"
-    android:orientation="vertical"
-    android:padding="16dp"
+    android:fitsSystemWindows="true"
     tools:context=".ui.client.ConfirmBookingActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tvConfirmTitle"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:text="Confirma tu Cita"
         android:textColor="@color/barber_white"
         android:textSize="24sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
+        android:id="@+id/labelBarber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:text="Barbero:"
         android:textColor="@color/barber_grey"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tvConfirmTitle"
+        app:layout_constraintStart_toStartOf="@id/tvConfirmTitle"/>
 
     <TextView
         android:id="@+id/tvConfirmBarber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:textColor="@color/barber_white"
         android:textSize="20sp"
         android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/labelBarber"
+        app:layout_constraintStart_toStartOf="@id/labelBarber"
         tools:text="Nombre del Barbero" />
 
     <TextView
+        android:id="@+id/labelAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Dirección:"
+        android:textColor="@color/barber_grey"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tvConfirmBarber"
+        app:layout_constraintStart_toStartOf="@id/tvConfirmBarber"/>
+
+    <TextView
+        android:id="@+id/tvConfirmAddress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/barber_white"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/labelAddress"
+        app:layout_constraintStart_toStartOf="@id/labelAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="16dp"
+        tools:text="Calle Falsa 123, Ciudad" />
+
+    <TextView
+        android:id="@+id/labelService"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Servicio:"
         android:textColor="@color/barber_grey"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tvConfirmAddress"
+        app:layout_constraintStart_toStartOf="@id/tvConfirmAddress"/>
 
     <TextView
         android:id="@+id/tvConfirmService"
@@ -48,39 +92,53 @@
         android:textColor="@color/barber_white"
         android:textSize="20sp"
         android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/labelService"
+        app:layout_constraintStart_toStartOf="@id/labelService"
         tools:text="Corte de Cabello" />
 
     <TextView
         android:id="@+id/tvConfirmPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:textColor="@color/barber_gold"
         android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/tvConfirmService"
+        app:layout_constraintStart_toStartOf="@id/tvConfirmService"
         tools:text="$25.00" />
 
     <TextView
+        android:id="@+id/labelDateTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Fecha y Hora:"
         android:textColor="@color/barber_grey"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tvConfirmPrice"
+        app:layout_constraintStart_toStartOf="@id/tvConfirmPrice"/>
 
     <TextView
         android:id="@+id/tvConfirmDateTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
         android:textColor="@color/barber_white"
         android:textSize="20sp"
         android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/labelDateTime"
+        app:layout_constraintStart_toStartOf="@id/labelDateTime"
         tools:text="2025-11-10 a las 15:30" />
 
     <Button
         android:id="@+id/btnConfirmBooking"
         style="@style/BarberButton"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Confirmar y Agendar" />
+        android:text="Confirmar y Agendar"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

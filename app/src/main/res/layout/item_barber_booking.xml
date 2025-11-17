@@ -63,18 +63,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvClientLabel" />
 
-        <TextView
-            android:id="@+id/tvBookingStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/status_background_pending"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="4dp"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tvDateTime"/>
-
         <!-- Action Buttons -->
         <LinearLayout
             android:id="@+id/llActionButtons"
@@ -104,6 +92,20 @@
                 android:layout_marginStart="8dp"/>
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvBookingStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/status_background_pending"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:text="Pendiente"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/llActionButtons" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

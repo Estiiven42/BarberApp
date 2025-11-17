@@ -1,41 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@color/barber_black"
+    android:fitsSystemWindows="true"
     tools:context=".ui.barber.AddServiceActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
         android:id="@+id/etServiceName"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:hint="Nombre del Servicio"
-        android:inputType="textCapWords" />
+        android:inputType="textCapWords"
+        android:background="@drawable/edit_text_background"
+        android:padding="16dp"
+        android:textColor="@color/barber_white"
+        android:textColorHint="@color/barber_grey"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
         android:id="@+id/etServicePrice"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
         android:hint="Precio (COP)"
-        android:inputType="numberDecimal" />
+        android:inputType="numberDecimal"
+        android:background="@drawable/edit_text_background"
+        android:padding="16dp"
+        android:textColor="@color/barber_white"
+        android:textColorHint="@color/barber_grey"
+        app:layout_constraintTop_toBottomOf="@+id/etServiceName"
+        app:layout_constraintStart_toStartOf="@+id/etServiceName"
+        app:layout_constraintEnd_toEndOf="@+id/etServiceName" />
 
     <Button
         android:id="@+id/btnSaveService"
-        android:layout_width="match_parent"
+        style="@style/BarberButton"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Guardar Servicio" />
+        android:layout_marginBottom="24dp"
+        android:text="Guardar Servicio"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/etServicePrice"
+        app:layout_constraintEnd_toEndOf="@+id/etServicePrice" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
