@@ -29,6 +29,7 @@ class ConfirmBookingActivity : AppCompatActivity() {
     private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private val db: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val scope = CoroutineScope(Dispatchers.IO)
+    private var barberAddress: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,10 +44,19 @@ class ConfirmBookingActivity : AppCompatActivity() {
         val time = intent.getStringExtra("TIME")
 
         val tvConfirmBarber = findViewById<TextView>(R.id.tvConfirmBarber)
+        val tvConfirmAddress = findViewById<TextView>(R.id.tvConfirmAddress)
         val tvConfirmService = findViewById<TextView>(R.id.tvConfirmService)
         val tvConfirmPrice = findViewById<TextView>(R.id.tvConfirmPrice)
         val tvConfirmDateTime = findViewById<TextView>(R.id.tvConfirmDateTime)
         val btnConfirmBooking = findViewById<Button>(R.id.btnConfirmBooking)
+
+        // Fetch barber's address
+        if (barberId != null) {
+            db.collection("users").document(barberId).get().addOnSuccessListener { doc ->
+                barberAddress = doc.getString("address")
+                tvConfirmAddress.text = barberAddress ?: "Dirección no especificada"
+            }
+        }
 
         val formattedDate = formatDateForDisplay(date)
         tvConfirmBarber.text = barberName
@@ -61,13 +71,11 @@ class ConfirmBookingActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Get Client's Name
             db.collection("users").document(clientId).get().addOnSuccessListener { userDoc ->
                 val client = userDoc.toObject(User::class.java)
                 val clientName = client?.name ?: "Cliente Anónimo"
 
-                val availabilityRef = db.collection("barbers").document(barberId)
-                    .collection("availability").document(date)
+                val availabilityRef = db.collection("barbers").document(barberId).collection("availability").document(date)
                 val bookingRef = db.collection("bookings").document()
 
                 db.runTransaction { transaction ->
@@ -79,13 +87,14 @@ class ConfirmBookingActivity : AppCompatActivity() {
                             "clientId" to clientId,
                             "clientName" to clientName,
                             "barberId" to barberId,
+                            "barberName" to barberName,
                             "serviceId" to serviceId,
+                            "serviceName" to serviceName,
+                            "servicePrice" to servicePrice,
                             "date" to date,
                             "time" to time,
                             "status" to "pendiente",
-                            "barberName" to barberName,
-                            "serviceName" to serviceName,
-                            "servicePrice" to servicePrice
+                            "barberAddress" to (barberAddress ?: "")
                         )
                         transaction.set(bookingRef, bookingData)
                         transaction.update(availabilityRef, "availableTimes", FieldValue.arrayRemove(time))
@@ -95,17 +104,10 @@ class ConfirmBookingActivity : AppCompatActivity() {
                     }
                 }.addOnSuccessListener {
                     Toast.makeText(this, "¡Cita agendada con éxito!", Toast.LENGTH_LONG).show()
-
                     scope.launch {
-                        sendNotificationToUser(
-                            barberId,
-                            "Nueva Cita",
-                            "$clientName ha agendado una cita para el $formattedDate a las $time."
-                        )
+                        sendNotificationToUser(barberId, "Nueva Cita", "$clientName ha agendado una cita para el $formattedDate a las $time.")
                     }
-
                     scheduleReminder(date, time, serviceName, barberName)
-
                     val intent = Intent(this, ClientHomeActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)

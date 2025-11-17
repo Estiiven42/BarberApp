@@ -1,61 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/barber_black"
-    android:gravity="center"
-    android:padding="32dp"
+    android:fitsSystemWindows="true"
     tools:context=".ui.barber.BecomeBarberActivity">
 
-    <LinearLayout
-        android:id="@+id/contentLayout"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/imgIcon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@android:drawable/ic_menu_myplaces"
+        app:layout_constraintBottom_toTopOf="@id/tvTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Conviértete en Barbero"
+        android:textColor="@color/barber_white"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tvDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical">
+        android:text="Completa tu dirección para que los clientes puedan encontrarte."
+        android:textColor="@color/barber_grey"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp" />
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginBottom="24dp"
-            android:src="@android:drawable/ic_menu_myplaces"
-            android:contentDescription="Icono de barbero"/>
+    <EditText
+        android:id="@+id/etAddress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/edit_text_background"
+        android:hint="Dirección de la Barbería"
+        android:inputType="textPostalAddress"
+        android:padding="16dp"
+        android:textColor="@color/barber_white"
+        android:textColorHint="@color/barber_grey"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescription"
+        app:layout_constraintStart_toStartOf="@+id/tvDescription"
+        app:layout_constraintEnd_toEndOf="@+id/tvDescription"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:gravity="center"
-            android:text="Conviértete en Barbero"
-            android:textColor="@color/barber_white"
-            android:textSize="28sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:gravity="center"
-            android:text="Al confirmar, tu cuenta se cambiará al rol de barbero. Podrás publicar tus horarios, gestionar tus citas y ver tu historial de servicios."
-            android:textColor="@color/barber_grey"
-            android:textSize="16sp" />
-
-        <Button
-            android:id="@+id/btnConfirmBecomeBarber"
-            style="@style/BarberButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Confirmar y Convertirme en Barbero" />
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnConfirmBecomeBarber"
+        style="@style/BarberButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Confirmar y Convertirme en Barbero"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/etAddress"
+        app:layout_constraintEnd_toEndOf="@+id/etAddress"
+        android:layout_marginBottom="48dp"/>
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
