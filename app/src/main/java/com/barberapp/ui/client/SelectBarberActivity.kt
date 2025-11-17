@@ -27,23 +27,17 @@ class SelectBarberActivity : AppCompatActivity() {
         rvBarbers = findViewById(R.id.rvBarbers)
         tvNoBarbers = findViewById(R.id.tvNoBarbers)
 
-        // 1. Setup RecyclerView and Adapter correctly and immediately.
         setupRecyclerView()
-
-        // 2. Fetch data to populate the adapter.
         fetchBarbers()
     }
 
     private fun setupRecyclerView() {
-        // Initialize the adapter with an empty list.
         barberAdapter = BarberAdapter(barberList) { barber ->
-            val intent = Intent(this, SelectServiceActivity::class.java).apply {
+            val intent = Intent(this, BarberDetailActivity::class.java).apply {
                 putExtra("BARBER_ID", barber.uid)
-                putExtra("BARBER_NAME", "${barber.name} ${barber.lastName}")
             }
             startActivity(intent)
         }
-        // Set the layout manager and the adapter to the RecyclerView.
         rvBarbers.layoutManager = LinearLayoutManager(this)
         rvBarbers.adapter = barberAdapter
     }

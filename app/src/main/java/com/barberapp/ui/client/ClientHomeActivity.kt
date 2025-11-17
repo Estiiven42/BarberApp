@@ -63,7 +63,7 @@ class ClientHomeActivity : AppCompatActivity() {
         }
 
         btnMyProfile.setOnClickListener {
-            // Funcionalidad futura
+            startActivity(Intent(this, ProfileActivity::class.java))
         }
 
         btnLogout.setOnClickListener {

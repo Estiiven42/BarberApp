@@ -24,10 +24,12 @@
         <!-- Client Flow -->
         <activity android:name=".ui.client.ClientHomeActivity"/>
         <activity android:name=".ui.client.SelectBarberActivity"/>
+        <activity android:name=".ui.client.BarberDetailActivity"/>
         <activity android:name=".ui.client.SelectServiceActivity"/>
         <activity android:name=".ui.client.SelectDateTimeActivity"/>
         <activity android:name=".ui.client.ConfirmBookingActivity"/>
         <activity android:name=".ui.client.MyBookingsActivity"/>
+        <activity android:name=".ui.client.ProfileActivity"/>
 
         <!-- Barber Flow -->
         <activity android:name=".ui.barber.BarberHomeActivity"/>

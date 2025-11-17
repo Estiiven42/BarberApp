@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.barberapp.R
+import com.barberapp.data.model.User
 import com.barberapp.ui.SplashActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -16,12 +17,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+    private val db: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private lateinit var googleClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,15 +70,33 @@ class LoginActivity : AppCompatActivity() {
         if (requestCode == RC_GOOGLE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
-                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-                auth.signInWithCredential(credential)
-                    .addOnSuccessListener { goToSplash() }
-                    .addOnFailureListener { Toast.makeText(this, it.localizedMessage ?: "Error Google", Toast.LENGTH_SHORT).show() }
-            } catch (e: Exception) {
-                Toast.makeText(this, e.localizedMessage ?: "Error Google", Toast.LENGTH_SHORT).show()
+                val account: GoogleSignInAccount = task.getResult(ApiException::class.java)!!
+                firebaseAuthWithGoogle(account)
+            } catch (e: ApiException) {
+                Toast.makeText(this, "Error de Google: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnSuccessListener { authResult ->
+                val user = authResult.user!!
+                val userData = User(
+                    uid = user.uid,
+                    name = user.displayName ?: "",
+                    email = user.email ?: "",
+                    role = "client"
+                )
+                // Create or merge user data in Firestore
+                db.collection("users").document(user.uid).set(userData, SetOptions.merge())
+                    .addOnSuccessListener { goToSplash() }
+                    .addOnFailureListener { Toast.makeText(this, "Error al guardar datos", Toast.LENGTH_SHORT).show() }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error de autenticación: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun goToSplash() {

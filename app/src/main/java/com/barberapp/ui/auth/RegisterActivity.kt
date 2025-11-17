@@ -24,9 +24,6 @@ class RegisterActivity : AppCompatActivity() {
 
         val name = findViewById<EditText>(R.id.inputName)
         val lastName = findViewById<EditText>(R.id.inputLastName)
-        val country = findViewById<EditText>(R.id.inputCountry)
-        val city = findViewById<EditText>(R.id.inputCity)
-        val neighborhood = findViewById<EditText>(R.id.inputNeighborhood)
         val email = findViewById<EditText>(R.id.inputEmail)
         val pass = findViewById<EditText>(R.id.inputPassword)
         val btnCreate = findViewById<Button>(R.id.btnCreateAccount)
@@ -35,13 +32,10 @@ class RegisterActivity : AppCompatActivity() {
         btnCreate.setOnClickListener {
             val nameValue = name.text.toString().trim()
             val lastNameValue = lastName.text.toString().trim()
-            val countryValue = country.text.toString().trim()
-            val cityValue = city.text.toString().trim()
-            val neighborhoodValue = neighborhood.text.toString().trim()
             val emailValue = email.text.toString().trim()
             val passwordValue = pass.text.toString().trim()
 
-            if (nameValue.isEmpty() || lastNameValue.isEmpty() || countryValue.isEmpty() || cityValue.isEmpty() || neighborhoodValue.isEmpty() || emailValue.isEmpty() || passwordValue.isEmpty()) {
+            if (nameValue.isEmpty() || lastNameValue.isEmpty() || emailValue.isEmpty() || passwordValue.isEmpty()) {
                 Toast.makeText(this, "Completa todos los campos para crear una cuenta", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -53,9 +47,6 @@ class RegisterActivity : AppCompatActivity() {
                         "uid" to uid,
                         "name" to nameValue,
                         "lastName" to lastNameValue,
-                        "country" to countryValue,
-                        "city" to cityValue,
-                        "neighborhood" to neighborhoodValue,
                         "email" to emailValue,
                         "role" to "client" // Always register as a client
                     )
